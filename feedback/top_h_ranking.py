@@ -1,5 +1,5 @@
 # top_h_ranking.py
-from .feedback import RankBreakableFeedback
+from .rank_breakable import RankBreakableFeedback
 from .preference import PreferenceFeedback
 
 class TopHRankingFeedback(RankBreakableFeedback):

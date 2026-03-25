@@ -1,4 +1,4 @@
-from .feedback import RankBreakableFeedback
+from .rank_breakable import RankBreakableFeedback
 from .preference import PreferenceFeedback
 from collections import defaultdict
 
