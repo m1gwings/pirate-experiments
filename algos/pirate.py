@@ -5,11 +5,10 @@ import numpy as np
 from .algo import *
 
 class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
-    def __init__(self, T: int, n: int, k: int, delta: float) -> None:
+    def __init__(self, T: int, n: int, delta: float) -> None:
         super().__init__(name="PIRATE")
         self.T = T
         self.n = n
-        self.k = k
         self.delta = delta
         
         self.w = np.zeros((n, n))
@@ -49,7 +48,7 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
         
         # 3. Sort descending and extract top-k
         # np.argsort sorts ascending, so we negate the scores to get descending
-        top_k_ids = np.argsort(-noisy_degrees)[:self.k].tolist()
+        top_k_ids = np.argsort(-noisy_degrees).tolist()
         
         return Result(top_k_ids=top_k_ids)
     
