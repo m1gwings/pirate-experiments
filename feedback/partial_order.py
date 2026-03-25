@@ -11,7 +11,7 @@ class PartialOrderFeedback(RankBreakableFeedback):
         # Build an adjacency list mapping a predecessor ID to a set of successor IDs
         adj = defaultdict(set)
         for pref in self.preferences:
-            adj[pref.prec.id].add(pref.succ.id)
+            adj[pref.prec_id].add(pref.succ_id)
 
         # 1. Check for cycles (Asymmetry/Irreflexivity) using Depth First Search
         visited = set()
