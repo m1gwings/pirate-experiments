@@ -4,9 +4,6 @@ from feedback import PartialOrderFeedback
 import numpy as np
 from .algo import *
 
-# Assuming Result and Algorithm are imported or defined above
-# from .algo import Algorithm, Result 
-
 class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
     def __init__(self, T: int, n: int, k: int, delta: float) -> None:
         super().__init__(name="PIRATE")
@@ -19,7 +16,7 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
         self.E = np.zeros((n, n), dtype=bool)
         self.c = np.log(3 * self.T * self.n / self.delta)
 
-    def _process_feedback(self, feedback: PartialOrderFeedback) -> None:
+    def feedback(self, feedback: PartialOrderFeedback) -> None:
         for pref in feedback.rank_breaking():
             i, j = pref.prec_id, pref.succ_id
             

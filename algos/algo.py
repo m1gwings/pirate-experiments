@@ -16,15 +16,9 @@ class Result:
 class Algorithm(ABC, Generic[F]):
     def __init__(self, name: str) -> None:
         self.name = name
-        self.sample_count: int = 0
-    
-    # Don't forget to type the feedback argument here too!
-    def feed(self, feedback: F) -> None:
-        self.sample_count += 1
-        self._process_feedback(feedback)
     
     @abstractmethod
-    def _process_feedback(self, feedback: F) -> None:
+    def feedback(self, feedback: F) -> None:
         pass
 
     @abstractmethod
