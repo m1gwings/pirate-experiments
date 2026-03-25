@@ -4,29 +4,28 @@ import numpy as np
 
 class RankCentralityAlgorithm(Algorithm[PreferenceFeedback]):
     def __init__(self, n: int, max_iter: int = 1000, tol: float = 1e-6) -> None:
-        super().__init__("RankCentrality")
+        super().__init__(name="RankCentrality")
         self.n = n
         self.max_iter = max_iter
         self.tol = tol
         
         # Y[i, j] tracks the number of times item j is preferred over item i.
-        # This aligns with the paper's Y_{ij}^l indicator sum.
         self.Y = np.zeros((n, n))
         
         # k[i, j] tracks the total number of comparisons between i and j.
         self.k = np.zeros((n, n))
 
     def feedback(self, feedback: PreferenceFeedback) -> None:
-        # Assuming succ_id is the preferred item (winner) and prec_id is the less preferred item (loser)
-        i = feedback.prec_id
-        j = feedback.succ_id
+        # Following the established convention: prec_id is the winner, succ_id is the loser
+        winner = feedback.prec_id
+        loser = feedback.succ_id
         
-        # Increment wins for j over i
-        self.Y[i, j] += 1
+        # Increment wins for the winner over the loser (j over i, where i=loser, j=winner)
+        self.Y[loser, winner] += 1
         
-        # Increment total comparisons between the pair
-        self.k[i, j] += 1
-        self.k[j, i] += 1
+        # Increment total comparisons between the pair symmetrically
+        self.k[loser, winner] += 1
+        self.k[winner, loser] += 1
 
     def can_predict(self) -> bool:
         return bool(np.sum(self.k) > 0)
@@ -51,7 +50,7 @@ class RankCentralityAlgorithm(Algorithm[PreferenceFeedback]):
                     a_ij = self.Y[i, j] / self.k[i, j]
                     
                     # P_{ij} = (1 / d_{max}) * A_{ij} 
-                    # Note: Since a_ij + a_ji = 1, A_ij = a_ij in this setting
+                    # Since a_ij + a_ji = 1 in an unregularized setup, A_ij = a_ij
                     P[i, j] = a_ij / d_max
         
         # Add self-loops to ensure each row sums to 1
