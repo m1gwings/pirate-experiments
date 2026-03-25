@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Sequence
 from feedback import PartialOrderFeedback
 import numpy as np
-from algos import *
+from .algo import *
 
 # Assuming Result and Algorithm are imported or defined above
 # from .algo import Algorithm, Result 
 
-class Pirate(Algorithm[PartialOrderFeedback]):
+class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
     def __init__(self, T: int, n: int, k: int, delta: float) -> None:
         super().__init__(name="PIRATE")
         self.T = T
