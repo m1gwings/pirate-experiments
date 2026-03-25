@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Sequence
-from feedback import PartialOrderFeedback
+from feedback import *
 import numpy as np
 from .algo import *
 
