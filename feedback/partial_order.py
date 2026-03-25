@@ -3,11 +3,11 @@ from .preference import PreferenceFeedback
 from collections import defaultdict
 
 class PartialOrderFeedback(RankBreakableFeedback):
-    def __init__(self, preferences: list[PreferenceFeedback]):
+    def __init__(self, preferences: list[PreferenceFeedback]) -> None:
         self.preferences = preferences
         self._validate_partial_order()
 
-    def _validate_partial_order(self):
+    def _validate_partial_order(self) -> None:
         # Build an adjacency list mapping a predecessor ID to a set of successor IDs
         adj = defaultdict(set)
         for pref in self.preferences:
