@@ -1,8 +1,8 @@
 from .algo import Algorithm, Result
 from feedback import PreferenceFeedback
 import numpy as np
-from scipy.optimize import minimize
-from scipy.special import expit
+from scipy.optimize import minimize # type: ignore
+from scipy.special import expit # type: ignore
 
 class PLPairwiseMLEAlgorithm(Algorithm[PreferenceFeedback]):
     def __init__(self, n: int, k: int, lambda_reg: float = 0.01) -> None:
