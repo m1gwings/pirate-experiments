@@ -1,0 +1,44 @@
+# ---------------------------------------------------
+# PIRATE Experiments .gitignore
+# ---------------------------------------------------
+
+# Type Checking
+.mypy_cache/
+
+# Python Cache and Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VSCode Workspace Settings
+.vscode/
+
+# Jupyter Notebooks (if you add plotting later)
+.ipynb_checkpoints/
+
+# Environments (prevents accidentally committing heavy env folders)
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Outputs and Data (keeps the repo strictly for code)
+results/
+logs/
+data/
+*.csv
+*.json
+*.pdf
+*.png
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

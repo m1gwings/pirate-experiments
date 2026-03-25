@@ -1,0 +1,23 @@
+name: pirate-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Core Python
+  - python=3.10
+  
+  # Math & Baselines
+  - numpy
+  - scipy
+  - scikit-learn
+  
+  # Plotting (for your notebook later)
+  - matplotlib
+  - seaborn
+  - jupyter
+  
+  # Tooling
+  - mypy
+  
+  # Keep pip around just in case you need a highly specific PyPI package later
+  - pip
