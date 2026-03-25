@@ -20,14 +20,11 @@ class PirateAdapter(Algorithm[PreferenceFeedback]):
     def predict(self) -> Result:
         return self.pirate.predict()
 
-    def can_predict(self) -> bool:
-        return self.pirate.can_predict()
-
 def main():
     # Experiment parameters
-    n = 10
-    num_samples = 1000
-    k = 5
+    n = 20
+    num_samples = 100000
+    k = 10
     delta_samples = 100
     
     true_ranking = np.random.permutation(n).tolist()
@@ -40,14 +37,14 @@ def main():
         pos_i = true_ranking.index(i)
         pos_j = true_ranking.index(j)
         if pos_i < pos_j:
-            return PreferenceFeedback(succ_id=i, prec_id=j)
+            return PreferenceFeedback(prec_id=i, succ_id=j)
         else:
-            return PreferenceFeedback(succ_id=j, prec_id=i)
+            return PreferenceFeedback(prec_id=j, succ_id=i)
 
     # Baselines
     baselines = {
         "PIRATE": PirateAdapter(T=num_samples, n=n, delta=0.1),
-        "RankCentrality": RankCentralityAlgorithm(num_items=n)
+        "RankCentrality": RankCentralityAlgorithm(n=n)
     }
 
     # Loss function

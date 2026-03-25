@@ -1,6 +1,7 @@
 from typing import List, Dict, Callable
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm  # Added tqdm import
 
 from algos.algo import Algorithm, Result
 from feedback.feedback import Feedback
@@ -27,7 +28,8 @@ class Experiment:
         self.sample_points: List[int] = []
 
     def run(self) -> None:
-        for i in range(1, self.num_samples + 1):
+        # Wrapped the range generator with tqdm for a progress bar
+        for i in tqdm(range(1, self.num_samples + 1), desc="Running Experiments", unit="sample"):
             feedback = self.generator()
             
             for algo in self.baselines.values():
@@ -39,12 +41,9 @@ class Experiment:
             if i % self.delta_samples == 0:
                 self.sample_points.append(i)
                 for name, algo in self.baselines.items():
-                    if algo.can_predict():
-                        pred_result: Result = algo.predict()
-                        l = self.loss(self.true_ranking, pred_result.top_k_ids, self.k)
-                        self.results[name].append(l)
-                    else:
-                        self.results[name].append(1.0) # Max loss if cannot predict
+                    pred_result: Result = algo.predict()
+                    l = self.loss(self.true_ranking, pred_result.top_k_ids, self.k)
+                    self.results[name].append(l)
         
         self.plot()
 
@@ -60,4 +59,3 @@ class Experiment:
         plt.legend()
         plt.grid(True)
         plt.show()
-
