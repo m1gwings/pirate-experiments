@@ -27,9 +27,6 @@ class RankCentralityAlgorithm(Algorithm[PreferenceFeedback]):
         self.k[loser, winner] += 1
         self.k[winner, loser] += 1
 
-    def can_predict(self) -> bool:
-        return bool(np.sum(self.k) > 0)
-
     def predict(self) -> Result:
         # 1. Build the transition matrix P
         # d_i is the degree of node i in the comparison graph (number of unique opponents)

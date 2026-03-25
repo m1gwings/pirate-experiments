@@ -21,9 +21,6 @@ class PLPairwiseMLEAlgorithm(Algorithm[PreferenceFeedback]):
         
         self.wins[winner, loser] += 1
 
-    def can_predict(self) -> bool:
-        return bool(np.sum(self.wins) > 0)
-
     def predict(self) -> Result:
         def negative_log_likelihood(theta: np.ndarray) -> tuple[float, np.ndarray]:
             """

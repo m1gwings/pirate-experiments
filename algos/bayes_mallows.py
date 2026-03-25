@@ -44,11 +44,8 @@ class BayesMallowsAlgorithm(Algorithm[PreferenceFeedback]):
             "bottom_item": feedback.succ_id
         })
 
-    def can_predict(self) -> bool:
-        return len(self.comparisons) > 0
-
     def predict(self) -> Result:
-        if not self.can_predict():
+        if len(self.comparisons) == 0:
             return Result(top_k_ids=np.random.permutation(self.n).tolist())
         
         # 1. Convert comparisons to a pandas DataFrame, then to an R dataframe

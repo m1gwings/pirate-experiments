@@ -30,19 +30,6 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
             self.E[i, j] = (mu_ij - b_delta) > (mu_ji + b_delta)
             self.E[j, i] = (mu_ji - b_delta) > (mu_ij + b_delta)
 
-    def can_predict(self) -> bool:
-        C = self.E.copy()
-        for x in range(self.n):
-            C |= C[:, x:x+1] & C[x:x+1, :]
-            
-        np.fill_diagonal(C, False) 
-        out_degrees = C.sum(axis=1)
-        
-        required_degrees = set(range(self.n - self.k, self.n))
-        actual_degrees = set(out_degrees)
-        
-        return required_degrees.issubset(actual_degrees)
-
     def predict(self) -> Result:
         # 1. Recompute transitive closure to get final out-degrees
         C = self.E.copy()
@@ -50,26 +37,19 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
             C |= C[:, x:x+1] & C[x:x+1, :]
             
         np.fill_diagonal(C, False)
-        out_degrees = C.sum(axis=1)
         
-        # 2. Extract the top-k items in strict order
-        top_k_ids = []
+        # Convert to float so we can add fractional noise
+        out_degrees = C.sum(axis=1).astype(float)
         
-        # Iterate from n-1 (best item) down to n-k (k-th best item)
-        for target_degree in range(self.n - 1, self.n - self.k - 1, -1):
-            
-            # np.where returns a tuple, so we take the first element [0]
-            matches = np.where(out_degrees == target_degree)[0]
-            
-            if len(matches) > 0:
-                # If can_predict() is True, there will be exactly one match per target_degree
-                top_k_ids.append(int(matches[0]))
-            else:
-                # Safety net in case predict() is called before can_predict() resolves to True
-                raise ValueError(
-                    f"Cannot uniquely identify item with out-degree {target_degree}. "
-                    "Make sure to call can_predict() first to guarantee top-k convergence."
-                )
-                
+        # 2. Add uniform random noise in [0, 0.5) to break ties.
+        # Since the true out-degrees are integers, adding noise < 1 strictly 
+        # preserves the valid DAG topological order while shuffling ties.
+        noise = np.random.uniform(0, 0.5, size=self.n)
+        noisy_degrees = out_degrees + noise
+        
+        # 3. Sort descending and extract top-k
+        # np.argsort sorts ascending, so we negate the scores to get descending
+        top_k_ids = np.argsort(-noisy_degrees)[:self.k].tolist()
+        
         return Result(top_k_ids=top_k_ids)
     

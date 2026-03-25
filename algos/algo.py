@@ -22,9 +22,5 @@ class Algorithm(ABC, Generic[F]):
         pass
 
     @abstractmethod
-    def can_predict(self) -> bool:
-        pass
-
-    @abstractmethod
     def predict(self) -> Result:
         pass

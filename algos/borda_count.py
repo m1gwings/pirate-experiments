@@ -21,9 +21,6 @@ class BordaCountAlgorithm(Algorithm[PreferenceFeedback]):
         self.comparisons[winner] += 1
         self.comparisons[loser] += 1
 
-    def can_predict(self) -> bool:
-        return bool(np.sum(self.comparisons) > 0)
-
     def predict(self) -> Result:
         scores = np.zeros(self.n, dtype=float)
         
