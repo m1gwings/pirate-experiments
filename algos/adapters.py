@@ -11,7 +11,7 @@ class PreferenceToPartialOrderAdapter(Algorithm[PreferenceFeedback], Generic[Alg
     Adapts an algorithm that expects PartialOrderFeedback to accept PreferenceFeedback.
     """
     def __init__(self, algorithm: Algo_PO):
-        super().__init__(name=f"PrefToPO({algorithm.name})")
+        super().__init__(name=algorithm.name)
         self._algorithm = algorithm
 
     def feedback(self, feedback: PreferenceFeedback) -> None:
@@ -28,7 +28,7 @@ class PartialOrderToPreferenceAdapter(Algorithm[PartialOrderFeedback], Generic[A
     Adapts an algorithm that expects PreferenceFeedback to accept PartialOrderFeedback.
     """
     def __init__(self, algorithm: Algo_Pref):
-        super().__init__(name=f"POToPref({algorithm.name})")
+        super().__init__(name=algorithm.name)
         self._algorithm = algorithm
 
     def feedback(self, feedback: PartialOrderFeedback) -> None:
