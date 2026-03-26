@@ -10,10 +10,10 @@ import numpy as np
 
 def get_experiment() -> Experiment:
     # Experiment parameters
-    n = 10
-    num_samples = 10000
-    k = 5
-    delta_samples = 50
+    n = 20
+    num_samples = 20000
+    k = 20
+    delta_samples = 100
     
     true_ranking = np.random.permutation(n).tolist()
     

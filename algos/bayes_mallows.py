@@ -22,33 +22,25 @@ rpy2.rinterface_lib.callbacks.consolewrite_print = ignore_r_output
 rpy2.rinterface_lib.callbacks.consolewrite_warnerror = ignore_r_output
 
 class BayesMallowsAlgorithm(Algorithm[PreferenceFeedback]):
-    def __init__(self, n: int, nmc: int = 2000, burnin: int = 500, metric: str = "footrule") -> None:
+    # When initializing the algorithm, you need much higher nmc for this to stabilize
+    def __init__(self, n: int, nmc: int = 20000, burnin: int = 2000, metric: str = "footrule") -> None:
         super().__init__(name="BayesMallows")
         self.n = n
         self.nmc = nmc
         self.burnin = burnin
         self.metric = metric
-        
-        # Store feedback as a list of dictionaries mapping to the R dataframe structure
         self.comparisons: list[dict[str, Any]] = []
         
-        # Import the BayesMallows package from the R environment
         try:
             self.bm = importr("BayesMallows")
         except Exception as e:
-            raise ImportError(
-                "The R package 'BayesMallows' is missing or rpy2 is misconfigured. "
-                "Please ensure your Conda environment is correctly set up."
-            ) from e
+            raise ImportError("The R package 'BayesMallows' is missing.") from e
 
     def feedback(self, feedback: PreferenceFeedback) -> None:
-        # Following convention: prec_id is the winner, succ_id is the loser.
-        # BayesMallows explicitly uses 'top_item' and 'bottom_item'.
-        # We assign a unique 'assessor' to each pair to handle transitive closure.
         self.comparisons.append({
-            "assessor": len(self.comparisons) + 1, 
+            "assessor": 1, 
             "top_item": feedback.prec_id,
-            "bottom_item": feedback.succ_id
+            "bottom_item": feedback.succ_id 
         })
 
     def predict(self) -> list[int]:
@@ -85,7 +77,7 @@ class BayesMallowsAlgorithm(Algorithm[PreferenceFeedback]):
             return np.random.permutation(self.n).tolist()
             
         # 4. Extract items, sort, and shift back to 0-indexed for Python
-        sorted_items = consensus_pd.sort_values(by="ranking")['item'].tolist()
+        sorted_items = consensus_pd.sort_values(by="ranking")['item'].tolist()[::-1]
         
         # Safely extract just the digits from R's auto-generated labels (e.g., "Item 16" -> 16)
         sorted_ids = [int(''.join(filter(str.isdigit, str(x)))) - 1 for x in sorted_items]
