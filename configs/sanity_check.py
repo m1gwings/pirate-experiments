@@ -42,7 +42,7 @@ def get_experiment() -> Experiment:
     loss = kendall_tau_loss
     
     return Experiment(
-        name="Example Experiment",
+        name="Sanity Check",
         num_samples=num_samples,
         true_ranking=true_ranking,
         generator=generator,
