@@ -1,5 +1,5 @@
 from experiment.experiment import Experiment
-from algos.pirate import PiratePairwiseAdapterAlgorithm
+from algos import PirateAlgorithm, PreferenceToPartialOrderAdapter
 from algos.rank_centrality import RankCentralityAlgorithm
 from algos.borda_count import BordaCountAlgorithm
 from algos.bayes_mallows import BayesMallowsAlgorithm
@@ -31,7 +31,7 @@ def get_experiment() -> Experiment:
 
     # Baselines
     baselines = [
-        PiratePairwiseAdapterAlgorithm(n=n, delta=0.1),
+        PreferenceToPartialOrderAdapter(PirateAlgorithm(n=n, delta=0.1)),
         RankCentralityAlgorithm(n=n),
         BordaCountAlgorithm(n=n),
         BayesMallowsAlgorithm(n=n),

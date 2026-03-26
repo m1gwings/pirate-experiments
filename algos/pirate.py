@@ -1,6 +1,4 @@
-from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, Sequence
-from feedback import PartialOrderFeedback, PreferenceFeedback
+from feedback import PartialOrderFeedback
 import numpy as np
 from .algo import Algorithm
 
@@ -45,15 +43,3 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
         # 2. Sort descending and extract top-k
         # np.argsort sorts ascending, so we negate the scores to get descending        
         return np.argsort(-out_degrees).tolist()
-
-class PiratePairwiseAdapterAlgorithm(Algorithm[PreferenceFeedback]):
-    def __init__(self, n: int, delta: float):
-        super().__init__(name="PIRATE")
-        self.pirate = PirateAlgorithm(n=n, delta=delta)
-    
-    def feedback(self, feedback: PreferenceFeedback) -> None:
-        # PirateAlgorithm expects a PartialOrderFeedback, so we wrap the preference.
-        self.pirate.feedback(PartialOrderFeedback(preferences=[feedback]))
-
-    def predict(self) -> list[int]:
-        return self.pirate.predict()
