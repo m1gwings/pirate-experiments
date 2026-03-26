@@ -14,7 +14,7 @@ def get_experiment() -> Experiment:
     n = 20
     num_samples = 20000
     k = 20
-    delta_samples = 250
+    delta_samples = int(num_samples / 25)
     
     true_ranking = np.random.permutation(n).tolist()
     

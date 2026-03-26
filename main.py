@@ -5,9 +5,9 @@ def main():
     # TODO: Set all the seeds
 
     batch = ExperimentBatch(name="Experiment Batch 1", experiments=[
-        # sanity_check.get_experiment(),
+        sanity_check.get_experiment(),
         # trick_pl.get_experiment(),
-        boxcar_filter_trick.get_experiment()
+        # boxcar_filter_trick.get_experiment()
     ])
     batch.run()
     batch.plot()

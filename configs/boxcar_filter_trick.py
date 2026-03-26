@@ -22,9 +22,9 @@ from data_generator import SyntheticPositionalFilteredDataGenerator
 # ---------------------------------------------------------
 def get_experiment() -> Experiment:
     n = 50
-    num_samples = 20000
+    num_samples = 1000000
     k = 20
-    delta_samples = 500
+    delta_samples = int(num_samples / 25)
     
     # 1. Generate latent utilities
     utilities = np.random.normal(0, 1, n)
