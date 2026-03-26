@@ -5,7 +5,7 @@ import numpy as np
 from .data_gen import DataGenerator
 from feedback import PartialOrderFeedback
 from pos_filter import PositionalFilter, DeterministicPositionalFilter
-from ranking_models import RankingModel
+from ranking_models import RankingModel, PlackettLuce
 
 class SyntheticPositionalFilteredDataGenerator(DataGenerator[PartialOrderFeedback]):
     """
@@ -50,3 +50,27 @@ class SyntheticTopHDataGenerator(SyntheticPositionalFilteredDataGenerator):
         
         # Initialize the base class with the model and the new filter
         super().__init__(n=n, ranking_model=ranking_model, pos_filter=pos_filter)
+
+import numpy as np
+from typing import Optional
+
+class SyntheticTopHPlackettLuceDataGenerator(SyntheticTopHDataGenerator):
+    """
+    A convenience class that generates Top-h ranking feedback 
+    specifically using the Plackett-Luce ranking model.
+    """
+    def __init__(self, n: int, h: int, theta: Optional[np.ndarray] = None):
+        # Validate or initialize item skill levels (theta)
+        if theta is not None:
+            if len(theta) != n:
+                raise ValueError("theta must be an array of length n.")
+            self.theta = np.array(theta)
+        else:
+            # Default to uniform skill levels if none are provided
+            self.theta = np.ones(n)
+            
+        # Instantiate the specific Plackett-Luce ranking model
+        pl_model = PlackettLuce(self.theta)
+        
+        # Initialize the parent class, injecting the PL model
+        super().__init__(n=n, h=h, ranking_model=pl_model)
