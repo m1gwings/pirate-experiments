@@ -1,2 +1,4 @@
 from .data_gen import DataGenerator
 from .synthetic import SyntheticTopHDataGenerator
+from .synthetic import SyntheticTopHPlackettLuceDataGenerator
+from .synthetic import SyntheticPositionalFilteredDataGenerator

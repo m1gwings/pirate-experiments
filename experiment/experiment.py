@@ -16,7 +16,7 @@ class Experiment:
                  name: str,
                  num_samples: int,
                  true_ranking: List[int],
-                 generator: Iterator[Feedback],  # CHANGED: Now expects an Iterator
+                 generator: Iterator[Feedback],
                  baselines: List[Algorithm],
                  loss: Callable[[List[int], List[int], int], float],
                  k: int,
