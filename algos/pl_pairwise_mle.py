@@ -1,14 +1,13 @@
-from .algo import Algorithm, Result
+from .algo import Algorithm
 from feedback import PreferenceFeedback
 import numpy as np
 from scipy.optimize import minimize # type: ignore
 from scipy.special import expit # type: ignore
 
 class PLPairwiseMLEAlgorithm(Algorithm[PreferenceFeedback]):
-    def __init__(self, n: int, k: int, lambda_reg: float = 0.01) -> None:
+    def __init__(self, n: int, lambda_reg: float = 0.01) -> None:
         super().__init__(name="PL Pairwise MLE")
         self.n = n
-        self.k = k
         self.lambda_reg = lambda_reg
         
         # wins[i, j] tracks the number of times item i defeated item j
@@ -21,7 +20,7 @@ class PLPairwiseMLEAlgorithm(Algorithm[PreferenceFeedback]):
         
         self.wins[winner, loser] += 1
 
-    def predict(self) -> Result:
+    def predict(self) -> list[int]:
         def negative_log_likelihood(theta: np.ndarray) -> tuple[float, np.ndarray]:
             """
             Computes the regularized negative log-likelihood and its gradient.
@@ -67,7 +66,5 @@ class PLPairwiseMLEAlgorithm(Algorithm[PreferenceFeedback]):
         theta_opt = res.x
         
         # Sort scores in descending order to find the highest-ranked items
-        ranked_indices = np.argsort(theta_opt)[::-1]
-        top_k_ids = [int(idx) for idx in ranked_indices[:self.k]]
-        
-        return Result(top_k_ids=top_k_ids)
+        return np.argsort(theta_opt)[::-1].tolist()
+

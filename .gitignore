@@ -33,6 +33,7 @@ data/
 *.json
 *.pdf
 *.png
+output/
 
 # OS Generated Files
 .DS_Store

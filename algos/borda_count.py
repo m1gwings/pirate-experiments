@@ -1,12 +1,11 @@
-from .algo import Algorithm, Result
+from .algo import Algorithm
 from feedback import PreferenceFeedback
 import numpy as np
 
 class BordaCountAlgorithm(Algorithm[PreferenceFeedback]):
-    def __init__(self, n: int, k: int) -> None:
+    def __init__(self, n: int) -> None:
         super().__init__(name="BordaCount")
         self.n = n
-        self.k = k
         
         # Track wins and total comparisons per item
         self.wins = np.zeros(n, dtype=float)
@@ -21,7 +20,7 @@ class BordaCountAlgorithm(Algorithm[PreferenceFeedback]):
         self.comparisons[winner] += 1
         self.comparisons[loser] += 1
 
-    def predict(self) -> Result:
+    def predict(self) -> list[int]:
         scores = np.zeros(self.n, dtype=float)
         
         # Safely calculate win ratios, avoiding division by zero for uncompared items
@@ -29,7 +28,5 @@ class BordaCountAlgorithm(Algorithm[PreferenceFeedback]):
         scores[mask] = self.wins[mask] / self.comparisons[mask]
         
         # Sort items by their Borda score in descending order
-        ranked_indices = np.argsort(scores)[::-1]
-        top_k_ids = [int(idx) for idx in ranked_indices[:self.k]]
-                
-        return Result(top_k_ids=top_k_ids)
+        return np.argsort(scores)[::-1].tolist()
+    

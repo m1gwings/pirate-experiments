@@ -1,4 +1,4 @@
-from .algo import Algorithm, Result
+from .algo import Algorithm
 from feedback import PreferenceFeedback
 import numpy as np
 
@@ -27,7 +27,7 @@ class RankCentralityAlgorithm(Algorithm[PreferenceFeedback]):
         self.k[loser, winner] += 1
         self.k[winner, loser] += 1
 
-    def predict(self) -> Result:
+    def predict(self) -> list[int]:
         # 1. Build the transition matrix P
         # d_i is the degree of node i in the comparison graph (number of unique opponents)
         d_i = np.sum(self.k > 0, axis=1)
@@ -35,7 +35,7 @@ class RankCentralityAlgorithm(Algorithm[PreferenceFeedback]):
         
         if d_max == 0:
             # No comparisons yet, return a random ranking
-            return Result(top_k_ids=np.random.permutation(self.n).tolist())
+            return np.random.permutation(self.n).tolist()
 
         P = np.zeros((self.n, self.n))
         for i in range(self.n):
@@ -63,6 +63,5 @@ class RankCentralityAlgorithm(Algorithm[PreferenceFeedback]):
             pi = pi_new
         
         # 3. Sort items by their stationary probability (Rank Centrality score)
-        sorted_ids = np.argsort(pi)[::-1].tolist()
-        
-        return Result(top_k_ids=sorted_ids)
+        return np.argsort(pi)[::-1].tolist()
+    

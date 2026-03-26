@@ -1,4 +1,4 @@
-from .algo import Algorithm, Result
+from .algo import Algorithm
 from .pirate import PirateAlgorithm
 from .rank_centrality import RankCentralityAlgorithm
 from .borda_count import BordaCountAlgorithm

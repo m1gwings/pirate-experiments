@@ -1,4 +1,4 @@
-from .algo import Algorithm, Result
+from .algo import Algorithm
 from feedback import PreferenceFeedback
 import numpy as np
 
@@ -44,9 +44,9 @@ class BayesMallowsAlgorithm(Algorithm[PreferenceFeedback]):
             "bottom_item": feedback.succ_id
         })
 
-    def predict(self) -> Result:
+    def predict(self) -> list[int]:
         if len(self.comparisons) == 0:
-            return Result(top_k_ids=np.random.permutation(self.n).tolist())
+            return np.random.permutation(self.n).tolist()
         
         # 1. Convert comparisons to a pandas DataFrame, then to an R dataframe
         df = pd.DataFrame(self.comparisons)
@@ -77,9 +77,9 @@ class BayesMallowsAlgorithm(Algorithm[PreferenceFeedback]):
             if missing_items:
                 sorted_ids.extend(missing_items)
                 
-            return Result(top_k_ids=sorted_ids)
+            return sorted_ids
             
         except Exception as e:
             print(f"BayesMallows MCMC sampling failed: {e}")
             # Fallback to random if the chain fails (e.g., extremely sparse data)
-            return Result(top_k_ids=np.random.permutation(self.n).tolist())
+            return np.random.permutation(self.n).tolist()

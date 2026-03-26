@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, Sequence
-from feedback import *
+from feedback import PartialOrderFeedback, PreferenceFeedback
 import numpy as np
-from .algo import *
+from .algo import Algorithm
 
 class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
     def __init__(self, T: int, n: int, delta: float) -> None:
@@ -29,7 +29,7 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
             self.E[i, j] = (mu_ij - b_delta) > (mu_ji + b_delta)
             self.E[j, i] = (mu_ji - b_delta) > (mu_ij + b_delta)
 
-    def predict(self) -> Result:
+    def predict(self) -> list[int]:
         # 1. Recompute transitive closure to get final out-degrees
         C = self.E.copy()
         for x in range(self.n):
@@ -37,18 +37,20 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
             
         np.fill_diagonal(C, False)
         
-        # Convert to float so we can add fractional noise
-        out_degrees = C.sum(axis=1).astype(float)
+        out_degrees = C.sum(axis=1)
         
-        # 2. Add uniform random noise in [0, 0.5) to break ties.
-        # Since the true out-degrees are integers, adding noise < 1 strictly 
-        # preserves the valid DAG topological order while shuffling ties.
-        noise = np.random.uniform(0, 0.5, size=self.n)
-        noisy_degrees = out_degrees + noise
-        
-        # 3. Sort descending and extract top-k
-        # np.argsort sorts ascending, so we negate the scores to get descending
-        top_k_ids = np.argsort(-noisy_degrees).tolist()
-        
-        return Result(top_k_ids=top_k_ids)
+        # 2. Sort descending and extract top-k
+        # np.argsort sorts ascending, so we negate the scores to get descending        
+        return np.argsort(-out_degrees).tolist()
+
+class PiratePairwiseAdapterAlgorithm(Algorithm[PreferenceFeedback]):
+    def __init__(self, T: int, n: int, delta: float):
+        super().__init__(name="PIRATE")
+        self.pirate = PirateAlgorithm(T=T, n=n, delta=delta)
     
+    def feedback(self, feedback: PreferenceFeedback) -> None:
+        # PirateAlgorithm expects a PartialOrderFeedback, so we wrap the preference.
+        self.pirate.feedback(PartialOrderFeedback(preferences=[feedback]))
+
+    def predict(self) -> list[int]:
+        return self.pirate.predict()
