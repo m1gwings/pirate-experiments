@@ -222,7 +222,7 @@ dependencies:
   - pyzmq=27.1.0=py310hc4bea81_2
   - qhull=2020.2=h434a139_5
   - qt6-main=6.10.2=pl5321h16c4a6b_6
-  - r-base=4.5.3=h15dba0b_1
+  - r-base>=4.3,<4.4
   - readline=8.3=h853b02a_0
   - referencing=0.37.0=pyhcf101f3_0
   - requests=2.32.5=pyhcf101f3_1
@@ -230,7 +230,8 @@ dependencies:
   - rfc3986-validator=0.1.1=pyh9f0ad1d_0
   - rfc3987-syntax=1.1.0=pyhe01879c_1
   - rpds-py=0.30.0=py310hd8f68c5_0
-  - rpy2=3.6.6=py310r45h8d87f43_1
+  - rpy2
+  - r-bayesmallows
   - scikit-learn=1.7.2=py310h228f341_0
   - scipy=1.15.2=py310h1d65ade_0
   - seaborn=0.13.2=hd8ed1ab_3
@@ -297,7 +298,4 @@ dependencies:
   - zipp=3.23.0=pyhcf101f3_1
   - zlib-ng=2.3.3=hceb46e0_1
   - zstd=1.5.7=hb78ec9c_6
-  - pip:
-      - rpy2-rinterface==3.6.5
-      - rpy2-robjects==3.6.4
 prefix: /opt/miniconda3/envs/pirate_env

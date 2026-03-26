@@ -5,17 +5,20 @@ import numpy as np
 from .algo import Algorithm
 
 class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
-    def __init__(self, T: int, n: int, delta: float) -> None:
+    def __init__(self, n: int, delta: float) -> None:
         super().__init__(name="PIRATE")
-        self.T = T
         self.n = n
         self.delta = delta
         
         self.w = np.zeros((n, n))
         self.E = np.zeros((n, n), dtype=bool)
-        self.c = np.log(3 * self.T * self.n / self.delta)
+        self.sample_count = 0
+        self.c = np.inf * np.ones((n, n))
 
     def feedback(self, feedback: PartialOrderFeedback) -> None:
+        self.sample_count += 1
+        self.c = np.log(3 * self.sample_count * self.n / self.delta)
+
         for pref in feedback.rank_breaking():
             i, j = pref.prec_id, pref.succ_id
             
@@ -44,9 +47,9 @@ class PirateAlgorithm(Algorithm[PartialOrderFeedback]):
         return np.argsort(-out_degrees).tolist()
 
 class PiratePairwiseAdapterAlgorithm(Algorithm[PreferenceFeedback]):
-    def __init__(self, T: int, n: int, delta: float):
+    def __init__(self, n: int, delta: float):
         super().__init__(name="PIRATE")
-        self.pirate = PirateAlgorithm(T=T, n=n, delta=delta)
+        self.pirate = PirateAlgorithm(n=n, delta=delta)
     
     def feedback(self, feedback: PreferenceFeedback) -> None:
         # PirateAlgorithm expects a PartialOrderFeedback, so we wrap the preference.

@@ -10,10 +10,10 @@ import numpy as np
 
 def get_experiment() -> Experiment:
     # Experiment parameters
-    n = 20
-    num_samples = 20000
-    k = 10
-    delta_samples = 100
+    n = 10
+    num_samples = 10000
+    k = 5
+    delta_samples = 50
     
     true_ranking = np.random.permutation(n).tolist()
     
@@ -31,10 +31,10 @@ def get_experiment() -> Experiment:
 
     # Baselines
     baselines = [
-        PiratePairwiseAdapterAlgorithm(T=num_samples, n=n, delta=0.1),
+        PiratePairwiseAdapterAlgorithm(n=n, delta=0.1),
         RankCentralityAlgorithm(n=n),
         BordaCountAlgorithm(n=n),
-        # BayesMallowsAlgorithm(n=n),
+        BayesMallowsAlgorithm(n=n),
         PLPairwiseMLEAlgorithm(n=n)
     ]
 

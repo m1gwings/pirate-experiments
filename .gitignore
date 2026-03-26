@@ -43,3 +43,28 @@ output/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# ---------------------------------------------------
+# R Specific Files
+# ---------------------------------------------------
+
+# History and Workspace files
+.RData
+.Rhistory
+.Rapp.history
+.Ruserdata
+
+# RStudio user-specific settings (if you ever open the folder in RStudio)
+.Rproj.user/
+*.Rproj
+
+# R environment variables (often contains secrets or local system paths)
+.Renviron
+
+# Execution outputs and logs
+*.Rout
+*.Rout.save
+*.Rout.fail
+
+# R Markdown / knitr cache
+/*_cache/
