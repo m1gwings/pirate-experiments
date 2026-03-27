@@ -2,7 +2,6 @@ from experiment.experiment import Experiment
 from algos import PirateAlgorithm, PreferenceToPartialOrderAdapter
 from algos.rank_centrality import RankCentralityAlgorithm
 from algos.borda_count import BordaCountAlgorithm
-from algos.bayes_mallows import BayesMallowsAlgorithm
 from algos.pl_pairwise_mle import PLPairwiseMLEAlgorithm
 from feedback.preference import PreferenceFeedback
 from loss.kendall_tau import kendall_tau_loss
@@ -12,9 +11,9 @@ from typing import Iterator
 def get_experiment() -> Experiment:
     # Experiment parameters
     n = 20
-    num_samples = 20000
+    num_samples = 10000
     k = 20
-    delta_samples = int(num_samples / 25)
+    delta_samples = int(num_samples / 50)
     
     true_ranking = np.random.permutation(n).tolist()
     
@@ -37,10 +36,9 @@ def get_experiment() -> Experiment:
 
     # Baselines
     baselines = [
-        PreferenceToPartialOrderAdapter(PirateAlgorithm(n=n, delta=0.1)),
+        PreferenceToPartialOrderAdapter(PirateAlgorithm(n=n)),
         RankCentralityAlgorithm(n=n),
         BordaCountAlgorithm(n=n),
-        BayesMallowsAlgorithm(n=n),
         PLPairwiseMLEAlgorithm(n=n)
     ]
 

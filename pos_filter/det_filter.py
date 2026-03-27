@@ -9,14 +9,11 @@ class DeterministicPositionalFilter(PositionalFilter):
     def __init__(self, n: int, positions: List[Tuple[int, int]]) -> None:
         super().__init__(n=n)
         
-        # Check for duplicates
-        if len(positions) != len(set(positions)):
-            raise ValueError("There cannot be duplicated position pairs.")
-            
-        self.positions = positions
-        self._validate_positional_partial_order()
+        # Automatically handle duplicates by converting to a set
+        self.positions = list(set(positions))
+        self._validate_and_close_partial_order()
 
-    def _validate_positional_partial_order(self) -> None:
+    def _validate_and_close_partial_order(self) -> None:
         adj = defaultdict(set)
         
         for p1, p2 in self.positions:
@@ -53,12 +50,30 @@ class DeterministicPositionalFilter(PositionalFilter):
                 if has_cycle(node):
                     raise ValueError("The provided position pairs contain a cycle and do not form a valid partial order.")
 
-        # 2. Check for explicit transitivity
-        for a in adj:
-            for b in adj[a]:
-                for c in adj.get(b, []):
-                    if c not in adj[a]:
-                        raise ValueError(f"Missing transitive relation: {a} < {b} and {b} < {c}, but {a} < {c} is missing.")
+        # 2. Automatically compute and apply the transitive closure
+        closure_edges = set(self.positions)
+        
+        def get_reachable(start_node):
+            reachable = set()
+            stack = [start_node]
+            while stack:
+                curr = stack.pop()
+                for neighbor in adj.get(curr, []):
+                    if neighbor not in reachable:
+                        reachable.add(neighbor)
+                        stack.append(neighbor)
+            return reachable
+
+        for node in range(self.n):
+            if node in adj:
+                reachable_nodes = get_reachable(node)
+                for r_node in reachable_nodes:
+                    closure_edges.add((node, r_node))
+                    # Keep the adjacency list updated with the new edges
+                    adj[node].add(r_node)
+
+        # Overwrite self.positions with the fully transitively closed set
+        self.positions = list(closure_edges)
 
     def filter(self, ranking: List[int]) -> PartialOrderFeedback:
         # Validate ranking length and uniqueness

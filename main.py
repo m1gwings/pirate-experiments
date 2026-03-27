@@ -1,16 +1,27 @@
+import matplotlib
+matplotlib.use('Agg')
+
+import sys
 from experiment.experiment import ExperimentBatch
-from configs import sanity_check, trick_pl, boxcar_filter_trick
+from configs import sanity_check, trick_pl, break_pl
+import rpy2.robjects as ro #type: ignore
+import random
+import numpy as np
 
 def main():
-    # TODO: Set all the seeds
+    seed = 42
 
-    batch = ExperimentBatch(name="Experiment Batch 1", experiments=[
-        sanity_check.get_experiment(),
+    random.seed(seed)
+    np.random.seed(seed)
+    ro.r['set.seed'](seed)
+
+    batch_1 = ExperimentBatch(name="Experiment Batch 1", experiments=[
+        # sanity_check.get_experiment(),
         # trick_pl.get_experiment(),
-        # boxcar_filter_trick.get_experiment()
+        break_pl.get_experiment(),
     ])
-    batch.run()
-    batch.plot()
+    batch_1.run()
+    batch_1.plot()
 
 if __name__ == '__main__':
     main()
