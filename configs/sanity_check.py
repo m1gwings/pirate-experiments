@@ -13,7 +13,6 @@ def get_experiment() -> Experiment:
     n = 20
     num_samples = 10000
     k = 20
-    delta_samples = int(num_samples / 50)
     
     true_ranking = np.random.permutation(n).tolist()
     
@@ -52,6 +51,5 @@ def get_experiment() -> Experiment:
         generator=generator_iterator, # 3. Pass the iterator instance
         baselines=baselines,
         loss=loss,
-        k=k,
-        delta_samples=delta_samples
+        k=k
     )

@@ -7,7 +7,7 @@ import os
 import csv
 from datetime import datetime
 
-# Assuming these have their own correct type hints
+# Assuming these have their own correct type hints in your project
 from algos.algo import Algorithm
 from feedback.feedback import Feedback
 
@@ -20,8 +20,8 @@ class Experiment:
                  baselines: List[Algorithm],
                  loss: Callable[[List[int], List[int], int], float],
                  k: int,
-                 delta_samples: int,
-                 initial_samples: int = 1) -> None:
+                 num_recordings: int = 200,
+                 initial_samples: int = 5) -> None:
         
         self.name: str = name
         self.num_samples: int = num_samples
@@ -30,8 +30,18 @@ class Experiment:
         self.baselines: Dict[str, Algorithm] = {algo.name: algo for algo in baselines}
         self.loss: Callable[[List[int], List[int], int], float] = loss
         self.k: int = k
-        self.delta_samples: int = delta_samples
         self.initial_samples: int = initial_samples
+        
+        # LOG-SPACING LOGIC:
+        # Starts recording at 'initial_samples' and ends at 'num_samples'
+        # This effectively skips plotting any data points before 'initial_samples'
+        geom_points: Any = np.geomspace(initial_samples, num_samples, num=num_recordings)
+        rounded_points: List[int] = [int(p) for p in np.round(geom_points)]
+        
+        # Ensure points are unique and within bounds
+        self.recording_points: List[int] = sorted(list(set(
+            p for p in rounded_points if initial_samples <= p <= num_samples
+        )))
         
         self.results: Dict[str, List[float]] = {name: [] for name in self.baselines.keys()}
         self.sample_points: List[int] = []
@@ -45,32 +55,42 @@ class Experiment:
             self.results[name].append(loss_val)
 
     def run(self) -> None:
-        """Executes the simulation and triggers recording at milestones."""
+        """Executes the simulation and triggers recording at log-spaced milestones."""
+        recording_idx: int = 0
+        num_points: int = len(self.recording_points)
+        
         for i in tqdm(range(1, self.num_samples + 1), desc=f"Running: {self.name}"):
             try:
                 feedback: Feedback = next(self.generator)
             except StopIteration:
                 break
             
+            # Algorithms always see the feedback to update their models
             for algo in self.baselines.values():
                 algo.feedback(feedback) 
             
-            # Record first point early, then follow delta_samples cadence
-            if i == self.initial_samples:
+            # Only record if we've reached a designated log-spaced point
+            if recording_idx < num_points and i == self.recording_points[recording_idx]:
                 self._record_results(i)
-            elif i > self.initial_samples and (i - self.initial_samples) % self.delta_samples == 0:
-                self._record_results(i)
+                recording_idx += 1
 
     def plot(self, ax: Axes) -> None:
-        """Plots the results for all baselines."""
+        """Plots the results for all baselines without markers for a cleaner look."""
         for name, losses in self.results.items():
-            ax.semilogx(self.sample_points, losses, label=name)
+            # Marker removed for a smoother line-only aesthetic
+            ax.semilogx(self.sample_points, losses, label=name, alpha=0.9, linewidth=2)
         
-        ax.set_xlabel("Number of Samples")
+        ax.set_xlabel("Number of Samples (Log Scale)")
         ax.set_ylabel(f"Top-{self.k} Kendall Tau Loss")
         ax.set_title(self.name)
         ax.legend()
-        ax.grid(True)
+        
+        # Grid lines help the eye follow the log-scale magnitudes
+        ax.grid(True, which="both", ls="-", alpha=0.15)
+        
+        # Standard clean-plot formatting
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
 
 class ExperimentBatch:
     def __init__(self, name: str, experiments: List[Experiment]) -> None:
@@ -78,10 +98,12 @@ class ExperimentBatch:
         self.experiments: List[Experiment] = experiments
 
     def run(self) -> None:
+        """Executes all experiments in the batch sequence."""
         for exp in self.experiments:
             exp.run()
     
     def plot(self) -> None:
+        """Saves cleaned-up plots and CSV data to the output directory."""
         output_dir: str = "output"
         os.makedirs(output_dir, exist_ok=True)
 
@@ -93,17 +115,20 @@ class ExperimentBatch:
         for exp in self.experiments:
             plot_name: str = exp.name.lower().replace(" ", "_")
             
-            # 1. Save the Plot
+            # Explicit typing for fig/ax to satisfy MyPy
+            fig: Any
+            ax: Any
             fig, ax = plt.subplots(figsize=(10, 6))
+            
             exp.plot(ax)
-            plt.savefig(os.path.join(batch_output_dir, f"{plot_name}.png"))
+            plt.tight_layout()
+            plt.savefig(os.path.join(batch_output_dir, f"{plot_name}.png"), dpi=300)
             plt.close(fig)
             
-            # 2. Save the CSV Data
+            # CSV export for external analysis
             csv_path: str = os.path.join(batch_output_dir, f"{plot_name}.csv")
             with open(csv_path, mode='w', newline='') as f:
                 writer = csv.writer(f)
-                
                 baselines: List[str] = list(exp.results.keys())
                 header: List[str] = ['Number of Samples'] + baselines
                 writer.writerow(header)

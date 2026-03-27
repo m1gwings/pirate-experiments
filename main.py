@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 
 import sys
 from experiment.experiment import ExperimentBatch
-from configs import break_mle, break_mle_with_mallows, sanity_check, top_h_rev_gum
+from configs import mallows_mnar, sanity_check
 import rpy2.robjects as ro #type: ignore
 import random
 import numpy as np
@@ -16,9 +16,9 @@ def main():
     ro.r['set.seed'](seed)
 
     batch_1 = ExperimentBatch(name="Experiment Batch 1", experiments=[
-        # sanity_check.get_experiment(),
-        # trick_pl.get_experiment(),
-        break_mle_with_mallows.get_experiment(),
+        sanity_check.get_experiment(),
+        mallows_mnar.get_experiment(),
+        
     ])
     batch_1.run()
     batch_1.plot()
