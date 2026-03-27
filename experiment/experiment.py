@@ -20,44 +20,52 @@ class Experiment:
                  baselines: List[Algorithm],
                  loss: Callable[[List[int], List[int], int], float],
                  k: int,
-                 delta_samples: int) -> None:
+                 delta_samples: int,
+                 initial_samples: int = 1) -> None:
         
         self.name: str = name
         self.num_samples: int = num_samples
         self.true_ranking: List[int] = true_ranking
-        
-        # CHANGED: Updated type hint to match Iterator
         self.generator: Iterator[Feedback] = generator 
-        
         self.baselines: Dict[str, Algorithm] = {algo.name: algo for algo in baselines}
-        
         self.loss: Callable[[List[int], List[int], int], float] = loss
         self.k: int = k
         self.delta_samples: int = delta_samples
+        self.initial_samples: int = initial_samples
         
         self.results: Dict[str, List[float]] = {name: [] for name in self.baselines.keys()}
         self.sample_points: List[int] = []
 
+    def _record_results(self, current_sample: int) -> None:
+        """Records the loss for all algorithms at the current sample milestone."""
+        self.sample_points.append(current_sample)
+        for name, algo in self.baselines.items():
+            pred_result: List[int] = algo.predict() 
+            loss_val: float = self.loss(self.true_ranking, pred_result, self.k)
+            self.results[name].append(loss_val)
+
     def run(self) -> None:
-        for i in tqdm(range(1, self.num_samples + 1), desc=f"Running Experiment: {self.name}", unit="sample"):
-            
-            # CHANGED: Call next() on the iterator instead of calling it like a function
-            feedback: Feedback = next(self.generator)
+        """Executes the simulation and triggers recording at milestones."""
+        for i in tqdm(range(1, self.num_samples + 1), desc=f"Running: {self.name}"):
+            try:
+                feedback: Feedback = next(self.generator)
+            except StopIteration:
+                break
             
             for algo in self.baselines.values():
                 algo.feedback(feedback) 
             
-            if i % self.delta_samples == 0:
-                self.sample_points.append(i)
-                for name, algo in self.baselines.items():
-                    pred_result: List[int] = algo.predict() 
-                    loss_val: float = self.loss(self.true_ranking, pred_result, self.k)
-                    self.results[name].append(loss_val)
+            # Record first point early, then follow delta_samples cadence
+            if i == self.initial_samples:
+                self._record_results(i)
+            elif i > self.initial_samples and (i - self.initial_samples) % self.delta_samples == 0:
+                self._record_results(i)
 
     def plot(self, ax: Axes) -> None:
+        """Plots the results for all baselines."""
         for name, losses in self.results.items():
-            ax.plot(self.sample_points, losses, label=name)
-            
+            ax.semilogx(self.sample_points, losses, label=name)
+        
         ax.set_xlabel("Number of Samples")
         ax.set_ylabel(f"Top-{self.k} Kendall Tau Loss")
         ax.set_title(self.name)
@@ -101,9 +109,7 @@ class ExperimentBatch:
                 writer.writerow(header)
                 
                 for i, sample_point in enumerate(exp.sample_points):
-                    # Using List[Any] because it mixes ints and floats
                     row: List[Any] = [sample_point]
                     for baseline in baselines:
                         row.append(exp.results[baseline][i])
                     writer.writerow(row)
-                    

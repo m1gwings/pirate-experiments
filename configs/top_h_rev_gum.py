@@ -40,7 +40,7 @@ def get_experiment() -> Experiment:
     loss = kendall_tau_loss
     
     return Experiment(
-        name="Trick PL with Reverse Gumbel RUM and Top-H feedback",
+        name="Top-H Feedback with Reverse Gumbel",
         num_samples=num_samples,
         true_ranking=true_ranking,
         generator=SyntheticTopHDataGenerator(n=rum.n_items, ranking_model=rum, h=h),
