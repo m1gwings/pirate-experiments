@@ -63,8 +63,8 @@ def get_experiment(dataset_name: str = "25m") -> Experiment:
     print("Setting up MovieLens experiment...")
 
     # Configuration Variables
-    n: int = 50
-    k: int = 5
+    n: int = 25
+    k: int = 10
     num_runs: int = 5
     
     # 1. Load the requested dataset

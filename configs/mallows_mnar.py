@@ -17,8 +17,8 @@ def get_experiment() -> Experiment:
     print("Setting up Mallows MNAR experiment...")
 
     n: int = 20  
-    num_samples: int = 10000  
-    k: int = 20
+    num_samples: int = 20000  
+    k: int = 5
     num_runs = 5
     
     true_ranking: List[int] = np.random.permutation(n).tolist()
