@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List, Tuple, Any
 from experiment.experiment import Experiment
-from algos import PirateAlgorithm 
+from algos import PirateAlgorithm, BayesMallowsAlgorithm
 from algos.rank_centrality import RankCentralityAlgorithm
 from algos.borda_count import BordaCountAlgorithm
 from algos.pl_pairwise_mle import PLPairwiseMLEAlgorithm
@@ -16,9 +16,9 @@ from algos import Algorithm
 def get_experiment() -> Experiment:
     print("Setting up Mallows MNAR experiment...")
 
-    n: int = 20  
+    n: int = 10  
     num_samples: int = 20000  
-    k: int = 5
+    k: int = 10
     num_runs = 5
     
     true_ranking: List[int] = np.random.permutation(n).tolist()
@@ -42,7 +42,7 @@ def get_experiment() -> Experiment:
             ranking_model=mallows,
             pos_filter=DeterministicPositionalFilter(
                 n=n,
-                positions=[ (1, 2), (2, 3), (17, 18), (18, 19) ]
+                positions=[ (1, 2), (2, 3), (7, 8), (8, 9) ]
             )
         ) for _ in range(num_runs)],
         baselines_factory=baselines_factory,

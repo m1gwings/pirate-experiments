@@ -5,7 +5,7 @@ import numpy as np
 from .data_gen import DataGenerator
 from feedback import PartialOrderFeedback
 from pos_filter import PositionalFilter, DeterministicPositionalFilter
-from ranking_models import RankingModel, PlackettLuce
+from ranking_models import RankingModel, PlackettLuceRankingModel
 
 class SyntheticPositionalFilteredDataGenerator(DataGenerator[PartialOrderFeedback]):
     """
@@ -70,7 +70,7 @@ class SyntheticTopHPlackettLuceDataGenerator(SyntheticTopHDataGenerator):
             self.theta = np.ones(n)
             
         # Instantiate the specific Plackett-Luce ranking model
-        pl_model = PlackettLuce(self.theta)
+        pl_model = PlackettLuceRankingModel(self.theta)
         
         # Initialize the parent class, injecting the PL model
         super().__init__(n=n, h=h, ranking_model=pl_model)
@@ -118,7 +118,7 @@ class SyntheticBottomHPlackettLuceDataGenerator(SyntheticBottomHDataGenerator):
             self.theta = np.ones(n)
             
         # Instantiate the specific Plackett-Luce ranking model
-        pl_model = PlackettLuce(self.theta)
+        pl_model = PlackettLuceRankingModel(self.theta)
         
         # Initialize the parent class, injecting the PL model
         super().__init__(n=n, h=h, ranking_model=pl_model)

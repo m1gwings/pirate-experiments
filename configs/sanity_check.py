@@ -34,7 +34,6 @@ def get_experiment() -> Experiment:
     # Baselines
     def baselines_factory() -> List[Algorithm]: return [
         PreferenceToPartialOrderAdapter(PirateAlgorithm(n=n)),
-        PreferenceToPartialOrderAdapter(BayesMallowsAlgorithm(n=n)),
         RankCentralityAlgorithm(n=n),
         BordaCountAlgorithm(n=n),
         PLPairwiseMLEAlgorithm(n=n)

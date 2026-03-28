@@ -2,7 +2,7 @@ import numpy as np
 from .ranking_model import RankingModel
 from typing import Callable
 
-class RUM(RankingModel):
+class RUMRankingModel(RankingModel):
     def __init__(self, utilities: np.ndarray, noise_distribution: Callable[[int], np.ndarray]):
         super().__init__(n_items=len(utilities))
         self.utilities = utilities

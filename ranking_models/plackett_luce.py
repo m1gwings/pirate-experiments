@@ -1,7 +1,7 @@
 import numpy as np
-from .rum import RUM
+from .rum import RUMRankingModel
 
-class PlackettLuce(RUM):
+class PlackettLuceRankingModel(RUMRankingModel):
     def __init__(self, pl_params: np.ndarray):
         """
         Initializes a Plackett-Luce ranking model.

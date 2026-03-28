@@ -7,7 +7,7 @@ import pandas as pd  # type: ignore
 import numpy as np  # type: ignore
 
 from experiment.experiment import Experiment
-from algos import PirateAlgorithm, RankCentralityAlgorithm, BordaCountAlgorithm, PLPairwiseMLEAlgorithm, Algorithm
+from algos import PirateAlgorithm, RankCentralityAlgorithm, BordaCountAlgorithm, PLPairwiseMLEAlgorithm, Algorithm, BayesMallowsAlgorithm
 from algos.adapters import PartialOrderToPreferenceAdapter
 from feedback.preference import PreferenceFeedback
 from feedback.partial_order import PartialOrderFeedback
@@ -64,7 +64,7 @@ def get_experiment(dataset_name: str = "25m") -> Experiment:
 
     # Configuration Variables
     n: int = 25
-    k: int = 10
+    k: int = 25
     num_runs: int = 5
     
     # 1. Load the requested dataset
@@ -153,7 +153,7 @@ def get_experiment(dataset_name: str = "25m") -> Experiment:
         PirateAlgorithm(n=n),
         PartialOrderToPreferenceAdapter(RankCentralityAlgorithm(n=n)),
         PartialOrderToPreferenceAdapter(BordaCountAlgorithm(n=n)),
-        PartialOrderToPreferenceAdapter(PLPairwiseMLEAlgorithm(n=n))
+        PartialOrderToPreferenceAdapter(PLPairwiseMLEAlgorithm(n=n)),
     ]
 
     print("Experiment setup complete.")
