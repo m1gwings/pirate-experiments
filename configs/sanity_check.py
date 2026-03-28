@@ -6,13 +6,15 @@ from algos.pl_pairwise_mle import PLPairwiseMLEAlgorithm
 from feedback.preference import PreferenceFeedback
 from loss.kendall_tau import kendall_tau_loss
 import numpy as np
-from typing import Iterator
+from typing import Iterator, List
+from algos import Algorithm
 
 def get_experiment() -> Experiment:
     # Experiment parameters
     n = 20
     num_samples = 10000
     k = 20
+    num_runs = 5
     
     true_ranking = np.random.permutation(n).tolist()
     
@@ -30,11 +32,8 @@ def get_experiment() -> Experiment:
             else:
                 yield PreferenceFeedback(prec_id=j, succ_id=i)
 
-    # 2. Instantiate the iterator
-    generator_iterator = create_generator()
-
     # Baselines
-    baselines = [
+    def baselines_factory() -> List[Algorithm]: return [
         PreferenceToPartialOrderAdapter(PirateAlgorithm(n=n)),
         RankCentralityAlgorithm(n=n),
         BordaCountAlgorithm(n=n),
@@ -48,8 +47,8 @@ def get_experiment() -> Experiment:
         name="Sanity Check",
         num_samples=num_samples,
         true_ranking=true_ranking,
-        generator=generator_iterator, # 3. Pass the iterator instance
-        baselines=baselines,
+        generators=[create_generator() for _ in range(num_runs)], # 3. Pass the iterator instance
+        baselines_factory=baselines_factory,
         loss=loss,
         k=k
     )

@@ -11,18 +11,20 @@ from pos_filter import DeterministicPositionalFilter
 from data_generator import SyntheticPositionalFilteredDataGenerator, SyntheticTopHDataGenerator, SyntheticBottomHDataGenerator
 from ranking_models import MallowsRankingModel
 import random
+from algos import Algorithm
 
 def get_experiment() -> Experiment:
     n: int = 20  
     num_samples: int = 5000  
     k: int = 10
+    num_runs = 5
     
     true_ranking: List[int] = np.random.permutation(n).tolist()
 
     phi: float = 0.9
     mallows = MallowsRankingModel(n_items=n, phi=phi, true_ranking=true_ranking)
 
-    baselines: List[Any] = [
+    def baselines_factory() -> List[Algorithm]: return [
         PirateAlgorithm(n=n),
         RankBreakableToPreferenceAdapter(PLPairwiseMLEAlgorithm(n=n)),
         RankBreakableToPreferenceAdapter(BordaCountAlgorithm(n=n)),
@@ -33,12 +35,12 @@ def get_experiment() -> Experiment:
         name="Mallows MNAR",
         num_samples=num_samples,
         true_ranking=true_ranking,
-        generator=SyntheticBottomHDataGenerator(
+        generators=[SyntheticBottomHDataGenerator(
             n=n,
             h=10,
             ranking_model=mallows, 
-        ),
-        baselines=baselines,
+        ) for _ in range(num_runs)],
+        baselines_factory=baselines_factory,
         loss=kendall_tau_loss,
         k=k
     )
