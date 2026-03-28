@@ -2,3 +2,5 @@ from .data_gen import DataGenerator
 from .synthetic import SyntheticTopHDataGenerator
 from .synthetic import SyntheticTopHPlackettLuceDataGenerator
 from .synthetic import SyntheticPositionalFilteredDataGenerator
+from .synthetic import SyntheticBottomHDataGenerator
+from .synthetic import SyntheticBottomHPlackettLuceDataGenerator

@@ -16,13 +16,11 @@ class MallowsRankingModel(RankingModel):
     def sample(self) -> np.ndarray:
         """
         Samples using the Repeated Insertion Method (RIM) for Kendall-Mallows.
-        Returns a permutation where result[i] is the rank of item i. [cite: 174]
+        Returns an array where the index is the position, and the value is the item ID.
         """
-        # RIM generates a ranking (list of items from best to worst)
+        # 1. RIM generates a ranking centered around the identity [0, 1, ..., n-1]
         ranking: List[int] = [0]
         for i in range(1, self.n_items):
-            # Probability of inserting item i at position j relative to current items
-            # Based on Kendall distance dispersion [cite: 248, 250]
             idx_range = np.arange(i + 1)
             probs = self.phi ** (i - idx_range)
             probs /= np.sum(probs)
@@ -30,10 +28,9 @@ class MallowsRankingModel(RankingModel):
             pos = int(np.random.choice(idx_range, p=probs))
             ranking.insert(pos, i)
         
-        # Convert ranking list [item_at_rank_0, item_at_rank_1, ...] 
-        # to a permutation array pi where pi[item] = rank. [cite: 174]
-        permutation = np.zeros(self.n_items, dtype=np.int64)
-        for rank, item_idx in enumerate(ranking):
-            permutation[item_idx] = rank
-            
-        return permutation
+        # 2. ranking is currently a list of indices representing dispersion from the ideal.
+        # Example: if ranking is [1, 0, 2], it means the 2nd best item is in 1st place.
+        identity_dispersion = np.array(ranking, dtype=np.int64)
+        
+        # 3. Map the identity dispersion directly to your true_ranking items
+        return self.true_ranking[identity_dispersion]
