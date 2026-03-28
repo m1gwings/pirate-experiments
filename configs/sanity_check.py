@@ -10,6 +10,8 @@ from typing import Iterator, List
 from algos import Algorithm
 
 def get_experiment() -> Experiment:
+    print("Setting up sanity check experiment...")
+
     # Experiment parameters
     n = 20
     num_samples = 10000

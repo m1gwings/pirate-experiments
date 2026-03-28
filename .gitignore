@@ -68,3 +68,9 @@ Thumbs.db
 
 # R Markdown / knitr cache
 /*_cache/
+
+# Data directories and downloaded datasets
+data/
+ml-100k.zip
+ml-100k/
+*.csv

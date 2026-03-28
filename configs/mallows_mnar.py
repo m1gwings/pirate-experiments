@@ -14,14 +14,16 @@ import random
 from algos import Algorithm
 
 def get_experiment() -> Experiment:
+    print("Setting up Mallows MNAR experiment...")
+
     n: int = 20  
-    num_samples: int = 5000  
-    k: int = 10
+    num_samples: int = 10000  
+    k: int = 20
     num_runs = 5
     
     true_ranking: List[int] = np.random.permutation(n).tolist()
 
-    phi: float = 0.9
+    phi: float = 0.8
     mallows = MallowsRankingModel(n_items=n, phi=phi, true_ranking=true_ranking)
 
     def baselines_factory() -> List[Algorithm]: return [
@@ -35,10 +37,13 @@ def get_experiment() -> Experiment:
         name="Mallows MNAR",
         num_samples=num_samples,
         true_ranking=true_ranking,
-        generators=[SyntheticBottomHDataGenerator(
+        generators=[SyntheticPositionalFilteredDataGenerator(
             n=n,
-            h=10,
-            ranking_model=mallows, 
+            ranking_model=mallows,
+            pos_filter=DeterministicPositionalFilter(
+                n=n,
+                positions=[ (1, 2), (2, 3), (17, 18), (18, 19) ]
+            )
         ) for _ in range(num_runs)],
         baselines_factory=baselines_factory,
         loss=kendall_tau_loss,

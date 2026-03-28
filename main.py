@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 
 import sys
 from experiment.experiment import ExperimentBatch
-from configs import mallows_mnar, sanity_check
+from configs import mallows_mnar, sanity_check, movielens
 import rpy2.robjects as ro #type: ignore
 import random
 import numpy as np
@@ -15,10 +15,10 @@ def main():
     np.random.seed(seed)
     ro.r['set.seed'](seed)
 
-    batch_1 = ExperimentBatch(name="Experiment Batch 1", experiments=[
+    batch_1 = ExperimentBatch(name="Experiment Batch", experiments=[
         sanity_check.get_experiment(),
         mallows_mnar.get_experiment(),
-        
+        movielens.get_experiment()
     ])
     batch_1.run()
     batch_1.plot()
