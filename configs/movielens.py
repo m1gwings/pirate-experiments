@@ -7,7 +7,7 @@ import pandas as pd  # type: ignore
 import numpy as np  # type: ignore
 
 from experiment.experiment import Experiment
-from algos import PirateAlgorithm, RankCentralityAlgorithm, BordaCountAlgorithm, PLPairwiseMLEAlgorithm, Algorithm, BayesMallowsAlgorithm
+from algos import PirateAlgorithm, RankCentralityAlgorithm, BordaCountAlgorithm, PLPairwiseMLEAlgorithm, Algorithm
 from algos.adapters import PartialOrderToPreferenceAdapter
 from feedback.preference import PreferenceFeedback
 from feedback.partial_order import PartialOrderFeedback

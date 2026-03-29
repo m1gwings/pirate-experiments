@@ -1,5 +1,5 @@
 from experiment.experiment import Experiment
-from algos import PirateAlgorithm, PreferenceToPartialOrderAdapter, BayesMallowsAlgorithm, RankCentralityAlgorithm, PLPairwiseMLEAlgorithm, BordaCountAlgorithm
+from algos import PirateAlgorithm, PreferenceToPartialOrderAdapter, RankCentralityAlgorithm, PLPairwiseMLEAlgorithm, BordaCountAlgorithm
 from feedback.preference import PreferenceFeedback
 from loss.kendall_tau import kendall_tau_loss
 import numpy as np
@@ -42,6 +42,7 @@ def get_experiment() -> Experiment:
     # Loss function
     loss = kendall_tau_loss
     
+    print("Experiment setup complete.")
     return Experiment(
         name="Sanity Check",
         num_samples=num_samples,
