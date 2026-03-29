@@ -17,7 +17,7 @@ def get_experiment() -> Experiment:
     print("Setting up Plackett-Luce MNAR experiment...")
 
     n: int = 15  
-    num_samples: int = 1000000  
+    num_samples: int = 10000000  
     k: int = 15
     num_runs = 5
     
