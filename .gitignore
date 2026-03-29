@@ -74,3 +74,14 @@ data/
 ml-100k.zip
 ml-100k/
 *.csv
+
+# LaTeX auxiliary files in rebuttal_figures
+rebuttal_figures/*.aux
+rebuttal_figures/*.fdb_latexmk
+rebuttal_figures/*.fls
+rebuttal_figures/*.log
+rebuttal_figures/*.out
+rebuttal_figures/*.synctex.gz
+
+# Optional: Ignore the generated PDF if you only want the source in Git
+# rebuttal_figures/*.pdf

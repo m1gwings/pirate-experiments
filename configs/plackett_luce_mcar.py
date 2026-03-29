@@ -13,8 +13,16 @@ from ranking_models import PlackettLuceRankingModel
 import random
 from algos import Algorithm
 
-def get_experiment() -> Experiment:
+import random
+import numpy as np
+import os
+
+def get_experiment(seed = 42) -> Experiment:
     print("Setting up Plackett-Luce MCAR experiment...")
+
+    random.seed(seed)
+    np.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
 
     n: int = 10
     num_samples: int = 500000  
@@ -45,5 +53,6 @@ def get_experiment() -> Experiment:
         ) for _ in range(num_runs)],
         baselines_factory=baselines_factory,
         loss=kendall_tau_loss,
-        k=k
+        k=k,
+        seed=seed
     )

@@ -13,6 +13,10 @@ from loss.kendall_tau import kendall_tau_loss
 
 from pos_filter import DeterministicPositionalFilter
 
+import random
+import numpy as np
+import os
+
 def _ensure_sushi_full(data_dir: str = "./data") -> List[List[int]]:
     """Downloads the SUSHI Set A directly from the verified URL."""
     os.makedirs(data_dir, exist_ok=True)
@@ -38,9 +42,13 @@ def _ensure_sushi_full(data_dir: str = "./data") -> List[List[int]]:
             rankings.append([int(x) for x in line.strip().split()[2:]])
     return rankings
 
-def get_experiment() -> Experiment:
+def get_experiment(seed = 42) -> Experiment:
     print("Setting up Sushi MNAR experiment...")
     
+    random.seed(seed)
+    np.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+
     n: int = 10
     k: int = 10
     num_runs: int = 5
@@ -104,5 +112,6 @@ def get_experiment() -> Experiment:
         generators=generators,
         baselines_factory=baselines_factory,
         loss=kendall_tau_loss,
-        k=k
+        k=k,
+        seed=seed
     )

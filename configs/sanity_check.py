@@ -6,8 +6,16 @@ import numpy as np
 from typing import Iterator, List
 from algos import Algorithm
 
-def get_experiment() -> Experiment:
+import random
+import numpy as np
+import os
+
+def get_experiment(seed = 42) -> Experiment:
     print("Setting up sanity check experiment...")
+
+    random.seed(seed)
+    np.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
 
     # Experiment parameters
     n = 20
@@ -50,5 +58,6 @@ def get_experiment() -> Experiment:
         generators=[create_generator() for _ in range(num_runs)], # 3. Pass the iterator instance
         baselines_factory=baselines_factory,
         loss=loss,
-        k=k
+        k=k,
+        seed=seed
     )

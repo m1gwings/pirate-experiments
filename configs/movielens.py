@@ -13,6 +13,10 @@ from feedback.preference import PreferenceFeedback
 from feedback.partial_order import PartialOrderFeedback
 from loss.kendall_tau import kendall_tau_loss
 
+import random
+import numpy as np
+import os
+
 def _ensure_movielens_100k(data_dir: str = "./data") -> Any:
     """Downloads and extracts MovieLens 100K."""
     os.makedirs(data_dir, exist_ok=True)
@@ -58,9 +62,13 @@ def _ensure_movielens_25m(data_dir: str = "./data") -> Any:
     return df
 
 
-def get_experiment(dataset_name: str = "25m") -> Experiment:
+def get_experiment(dataset_name: str = "25m", seed = 42) -> Experiment:
     """Sets up the ranking experiment using exact sample sizes."""
     print("Setting up MovieLens experiment...")
+
+    random.seed(seed)
+    np.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
 
     # Configuration Variables
     n: int = 25
@@ -164,5 +172,6 @@ def get_experiment(dataset_name: str = "25m") -> Experiment:
         generators=generators,
         baselines_factory=baselines_factory,
         loss=kendall_tau_loss,
-        k=k
+        k=k,
+        seed=seed
     )

@@ -11,6 +11,10 @@ from datetime import datetime
 from algos.algo import Algorithm
 from feedback.feedback import Feedback
 
+import os
+import numpy as np
+import random
+
 class Experiment:
     def __init__(self,
                  name: str,
@@ -20,9 +24,12 @@ class Experiment:
                  baselines_factory: Callable[[], List[Algorithm]],
                  loss: Callable[[List[int], List[int], int], float],
                  k: int,
+                 seed: int,
                  num_recordings: int = 200,
                  initial_samples: int = 5) -> None:
         
+        self.seed = seed
+
         self.name: str = name
         self.num_samples: int = num_samples
         self.true_ranking: List[int] = true_ranking
@@ -51,6 +58,10 @@ class Experiment:
 
     def run(self) -> None:
         """Executes the simulation across the provided list of generators."""
+        random.seed(self.seed)
+        np.random.seed(self.seed)
+        os.environ['PYTHONHASHSEED'] = str(self.seed)
+
         # Initialize results dictionary based on a test instantiation
         test_baselines: List[Algorithm] = self.baselines_factory()
         self.results = {algo.name: [] for algo in test_baselines}
@@ -97,19 +108,22 @@ class Experiment:
                     self.results[name].append(run_losses[name])
 
     def plot(self, ax: Axes) -> None:
-        """Plots the mean results with standard deviation confidence intervals."""
         for name, runs_data in self.results.items():
-            if not runs_data:
-                continue
+            if not runs_data: continue
             
-            data_matrix: Any = np.array(runs_data)
-            mean_losses: Any = np.mean(data_matrix, axis=0)
-            std_losses: Any = np.std(data_matrix, axis=0)
+            data_matrix = np.array(runs_data)
+            mean_losses = np.mean(data_matrix, axis=0)
+            std_losses = np.std(data_matrix, axis=0)
+            
+            # Calculate 95% CI
+            # n = self.num_runs
+            n = data_matrix.shape[0]
+            confidence_interval = 1.96 * (std_losses / np.sqrt(n))
             
             line = ax.semilogx(self.sample_points, mean_losses, label=name, alpha=0.9, linewidth=2)[0]
             ax.fill_between(self.sample_points, 
-                            mean_losses - std_losses, 
-                            mean_losses + std_losses, 
+                            mean_losses - confidence_interval, 
+                            mean_losses + confidence_interval, 
                             color=line.get_color(), 
                             alpha=0.2)
         
