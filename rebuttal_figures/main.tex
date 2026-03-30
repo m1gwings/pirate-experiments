@@ -10,7 +10,7 @@
 \newcommand{\zscore}{1.96}   % 95% Confidence Interval z-score
 
 % --- 2. FILE PATHS & TITLES ---
-\newcommand{\BasePath}{../output/experiment_batch_20260330_002918/}
+\newcommand{\BasePath}{../output/experiment_batch_20260330_013957/}
 \newcommand{\FileA}{plackett-luce_mcar}
 \newcommand{\FileB}{plackett-luce_mnar}
 \newcommand{\FileC}{movielens_25m_top-25}
@@ -56,7 +56,7 @@
     
     \begin{tabular}{cc}
         % --- TOP ROW ---
-        \subcaptionbox{MCAR observations from a Plackett-Luce ranking model with $10$ items. The parameters have been sampled uniformly in $(0, 1)$. Each sample is obtained by choosing a pair of items uniformly at random and compute the pairwise preference feedback according to the latent ranking.\label{sub:a}}{
+        \subcaptionbox{MCAR observations from a Plackett-Luce ranking model with $10$ items. The parameters have been sampled uniformly in $(0, 1)$. Each sample is obtained by choosing a pair of items uniformly at random and computing the pairwise preference feedback according to the latent ranking.\label{sub:a}}{
             \begin{tikzpicture}
                 \begin{axis}[
                     width=10cm, height=7.5cm, xmode=log, ymode=normal,
@@ -80,7 +80,7 @@
                 \end{axis}
             \end{tikzpicture}
         } & 
-        \subcaptionbox{MNAR observations from a Plackett-Luce ranking model with 15 items. The parameters have been sampled uniformly in $(0, 1)$. The learner observes that the first item in the latent ranking precedes the second which precedes the third and that the third last item precedes the second last which precede the last.\label{sub:b}}{
+        \subcaptionbox{MNAR observations from a Plackett-Luce ranking model with 15 items. The parameters have been sampled uniformly in $(0, 1)$. The learner observes that the first item in the latent ranking precedes the second which precedes the third and that the third last item precedes the second last which precedes the last.\label{sub:b}}{
             \begin{tikzpicture}
                 \begin{axis}[
                     width=10cm, height=7.5cm, xmode=log, ymode=normal,
@@ -99,7 +99,7 @@
         } \\[1.8cm] % <--- INCREASED SPACING BETWEEN ROWS
 
         % --- BOTTOM ROW ---
-        \subcaptionbox{Observations generated from the MovieLens-25M dataset. The 25 movies with the highest number of ratings are selected. Each user is treated as a sample. An independent portion of the dataset is used to estimate a true ranking from the average rating. The preferences observed by the learners are generated from the ratings of a given user: movie A is preferred to movie B according to user U if and only if U rated A strictly higher than B.\label{sub:c}}{
+        \subcaptionbox{Observations generated from the MovieLens-25M dataset. The 25 movies with the highest number of ratings are selected. Each user is treated as a sample. An independent portion of the dataset is used to estimate an underlying ranking from the average rating. The preferences observed by the learners are generated from the ratings of a given user: movie A is preferred to movie B according to user U if and only if U rated A strictly higher than B.\label{sub:c}}{
             \begin{tikzpicture}
                 \begin{axis}[
                     width=10cm, height=7.5cm, xmode=log, ymode=normal,
@@ -116,7 +116,7 @@
                 \end{axis}
             \end{tikzpicture}
         } & 
-        \subcaptionbox{MNAR observations generated from the Sushi Preference Data Sets. An independent portion of the data is used to compute the true ranking from full-rankings thanks to a Borda count. The learner are trained by observing a MNAR portion of the comparisons in the full-ranking.\label{sub:d}}{
+        \subcaptionbox{MNAR observations generated from the Sushi Preference Data Set. An independent portion of the data is used to compute the underlying ranking from full-rankings thanks to a Borda count. The learner are trained by observing a MNAR portion of the comparisons in the full-ranking, according to the same positional censoring used in Figure~\ref{sub:b}.\label{sub:d}}{
             \begin{tikzpicture}
                 \begin{axis}[
                     width=10cm, height=7.5cm, xmode=log, ymode=normal,
@@ -143,7 +143,7 @@
     % --- THE FORCE FIGURE 1 RESET ---
     \setcounter{figure}{0} 
     
-    \captionof{figure}{Comparison of algorithms across experimental setups. The algorithms are compared by computing the Kendall Tau loss of the predicted ranking against the true one. Shaded regions denote the 95\% confidence interval over \Nseeds\ independent trials.}
+    \captionof{figure}{Comparison of algorithms across experimental setups. The algorithms are compared by computing the Kendall Tau loss of the predicted ranking against the underlying one. Shaded regions denote the 95\% confidence interval over \Nseeds\ independent trials.}
     \label{fig:main_results}
 \end{minipage}
 
