@@ -12,7 +12,7 @@ If you are using this code for your scientific publications, please cite:
 ```
 @inproceedings{migali2026learning,
   title={Learning to Rank from Incomplete Rankings},
-  authors={Migali, Cristiano and Genalti, Gianmarco and Metelli, Alberto Maria and Mussi, Marco},
+  author={Migali, Cristiano and Genalti, Gianmarco and Metelli, Alberto Maria and Mussi, Marco},
   booktitle={Proceedings of the International Conference on Machine Learning (ICML)},
   year={2026},
   volume={306},
